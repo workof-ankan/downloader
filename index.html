@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Downloader</title>
+  <style>
+    body {
+      background-color: #0c1e46;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      font-size: 3rem;
+      text-align: center;
+    }
+    #linkInput {
+      width: 90%;
+      max-width: 600px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #00c68e;
+      background: #101c3b;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      margin-top: 20px;
+    }
+    .options {
+      margin: 20px 0;
+    }
+    label {
+      margin-right: 20px;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #00c68e;
+      color: #fff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #00e9a6;
+    }
+    #status {
+      margin-top: 20px;
+      color: #eee;
+      font-size: 1rem;
+    }
+    #resultLink {
+      margin-top: 10px;
+      color: lightgreen;
+      font-size: 1.1rem;
+      display: none;
+    }
+    .box {
+      background: rgba(16, 28, 59, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      width: 90%;
+      max-width: 700px;
+    }
+    span {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+  <h1>Download Any Video or Audio<br>from Your Favourite Socials</h1>
+
+  <input type="text" id="linkInput" placeholder="Paste any video/playlist link here">
+
+  <div class="options">
+    <label><input type="radio" name="type" value="video" checked> Video (MP4)</label>
+    <label><input type="radio" name="type" value="audio"> Audio (MP3)</label>
+  </div>
+
+  <button onclick="download()">Download</button>
+  <div id="status"></div>
+
+  <a id="resultLink" href="#" target="_blank" download>Click here to Download</a>
+</div>
+<span> Made with &hearts; by Ankan </span>
+  <script>
+    async function download() {
+      const url = document.getElementById("linkInput").value;
+      const format = document.querySelector('input[name="type"]:checked').value;
+      const status = document.getElementById("status");
+      const resultLink = document.getElementById("resultLink");
+
+      status.textContent = "Fetching File(s)... Please wait...";
+      resultLink.style.display = "none";
+
+      try {
+        const res = await fetch("/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, format })
+        });
+
+        const data = await res.json();
+        if (data.file_url) {
+          status.textContent = "File Fetched Successfully!";
+          resultLink.href = data.file_url;
+          resultLink.style.display = "inline-block";
+        } else {
+          status.textContent = "Error: " + (data.error || "Something went wrong.");
+        }
+      } catch (err) {
+        status.textContent = "Error connecting to server.";
+      }
+    }
+  </script>
+</body>
+</html>
