@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__)
 DOWNLOAD_DIR = "downloads"
-YTDLP_PATH = "D:\\downloader\\yt-dlp.exe"  # adjust if path is different
+YTDLP_PATH = "yt-dlp"  # adjust if path is different
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 @app.route('/')
